@@ -5,6 +5,7 @@
 
 # IGNORAR ARCHIVOS DEL TIPO
 *.Rhistory
+*.rar
 
 # IGNORAR CARPETAS
 tmp_files_imgs/
