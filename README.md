@@ -2,7 +2,7 @@
 
 - [Presentación web](#)
 - [Informe final (Arvivo word)](https://github.com/PRIMERO-LOS-DATOS/COMPOSICION-DE-CARTERA-DEL-SISTEMA-FINANCIERO-DE-BOLIVIA/raw/main/LASPUMSS/COMPOSICION-DE-CARTERA-DEL-SISTEMA-FINANCIERO-DE-BOLIVIA/PRINCIPAL-ARTICULO-WORD.docx)
-- [Informe final (Arvivo pdf)](https://zenodo.org/doi/10.5281/zenodo.11559670)
+- [Informe final (Arvivo pdf)](https://github.com/PRIMERO-LOS-DATOS/COMPOSICION-DE-CARTERA-DEL-SISTEMA-FINANCIERO-DE-BOLIVIA/blob/main/LASPUMSS/COMPOSICION-DE-CARTERA-DEL-SISTEMA-FINANCIERO-DE-BOLIVIA/PRINCIPAL-ARTICULO-WORD.pdf)
 
 
 Este trabajo está bajo licencia 
