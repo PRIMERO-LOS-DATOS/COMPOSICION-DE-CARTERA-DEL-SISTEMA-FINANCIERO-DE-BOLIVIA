@@ -35,7 +35,7 @@ El presente artículo se constituye o tiene como objeto principal la difusión d
 
 - Repositorio GitHub (<a href="https://github.com/PRIMERO-LOS-DATOS/COMPOSICION-DE-CARTERA-DEL-SISTEMA-FINANCIERO-DE-BOLIVIA" target="_blank">Clic Aquí</a>) 
 - Documento Microsoft Word ([Clic Aquí](https://github.com/PRIMERO-LOS-DATOS/COMPOSICION-DE-CARTERA-DEL-SISTEMA-FINANCIERO-DE-BOLIVIA/raw/main/LASPUMSS/COMPOSICION-DE-CARTERA-DEL-SISTEMA-FINANCIERO-DE-BOLIVIA/PRINCIPAL-ARTICULO-WORD.docx))
-- Documento PDF (Ultima Versión) (<a href="https://github.com/PRIMERO-LOS-DATOS/COMPOSICION-DE-CARTERA-DEL-SISTEMA-FINANCIERO-DE-BOLIVIA/raw/main/LASPUMSS/COMPOSICION-DE-CARTERA-DEL-SISTEMA-FINANCIERO-DE-BOLIVIA/PRINCIPAL-ARTICULO-WORD.pdf" target="_blank">Clic Aquí</a>) 
+- Documento PDF (Ultima Versión) (<a href="https://github.com/PRIMERO-LOS-DATOS/COMPOSICION-DE-CARTERA-DEL-SISTEMA-FINANCIERO-DE-BOLIVIA/blob/main/LASPUMSS/COMPOSICION-DE-CARTERA-DEL-SISTEMA-FINANCIERO-DE-BOLIVIA/PRINCIPAL-ARTICULO-WORD.pdf" target="_blank">Clic Aquí</a>) 
 - Zenodo (<a href="https://zenodo.org/doi/10.5281/zenodo.11559670" target="_blank">Clic Aquí</a>) 
 
 ## METODOS
