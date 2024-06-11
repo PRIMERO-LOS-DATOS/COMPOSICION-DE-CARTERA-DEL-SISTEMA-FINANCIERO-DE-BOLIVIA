@@ -1,0 +1,82 @@
+---
+output: 
+  officedown::rdocx_document:
+    base_format: "bookdown::word_document2"
+    reference_docx: ASSETS/WORD-DOCUMENT/STYLE.docx
+    tables:
+      style: Normal
+      caption:
+       style: Table Caption
+       pre: 'Tabla'
+       sep: " <w:br/>"
+    plots:
+      style: Normal
+      align: center
+      topcaption: true
+      caption:
+       style: Image Caption
+       pre: 'Figura '
+       sep: " <w:br/>"
+    number_sections: true
+bibliography: [ASSETS/BIB/references.bib]
+nocite: '@*'
+csl: ASSETS/WORD-DOCUMENT/CLS/apa.csl
+---
+
+<!-- Configuración CHUNKS -->
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE,
+                      message = FALSE,
+                      warning = FALSE,
+                      fig.align='center',
+                      fig.cap = TRUE,
+                      dpi=700)
+
+rootProyectMain <- 'LASPUMSS/PRIMERO-LOS-DATOS/COSTO-PROMEDIO-POR-GASTOS-FINANCIEROS-DEL-SISTEMA-FINANCIERO-DE-BOLIVIA/RECURSOS-INVESTIGACION/WORD-DOCUMENT/'
+knitr::opts_knit$set(root.dir = getwd())
+options(scipen=999)
+
+
+require(officedown)
+require(officer)
+
+br <- officer::run_linebreak()
+
+ps <- officer::prop_section(
+    page_size = page_size(orient = "portrait"),
+    type = "continuous"
+)
+```
+
+
+<!-- CARATULA -->
+<!---BLOCK_POUR_DOCX{file: 'RECURSOS-INVESTIGACION/WORD-DOCUMENT/000-PREAMBULO/PRIMERA-PAGINA.docx'}--->
+
+\newpage
+<!-- INTRODUCCIÓN -->
+```{r, child = paste0(rootProyectMain,"001-INTRODUCCION/001-INTRODUCCION.Rmd") }
+```
+
+
+<!-- MÉTODOS -->
+```{r, child=paste0(rootProyectMain,"002-METODOS/002-METODOS.Rmd")}
+```
+
+\newpage
+<!-- RESULTADOS -->
+```{r, child=paste0(rootProyectMain,"003-RESULTADOS/003-RESULTADOS.Rmd")}
+```
+
+<!-- CONCLUSIÓN -->
+```{r, child=paste0(rootProyectMain,"004-CONCLUSIONES/004-CONCLUSIONES.Rmd")}
+```
+
+\newpage
+<!-- REFERENCIAS -->
+```{r, child=paste0(rootProyectMain,"005-REFERENCIAS/005-REFERENCIAS.Rmd")}
+```
+
+\newpage
+<!-- ANEXOS -->
+```{r, child=paste0(rootProyectMain,"006-ANEXOS/006-ANEXOS.Rmd")}
+```

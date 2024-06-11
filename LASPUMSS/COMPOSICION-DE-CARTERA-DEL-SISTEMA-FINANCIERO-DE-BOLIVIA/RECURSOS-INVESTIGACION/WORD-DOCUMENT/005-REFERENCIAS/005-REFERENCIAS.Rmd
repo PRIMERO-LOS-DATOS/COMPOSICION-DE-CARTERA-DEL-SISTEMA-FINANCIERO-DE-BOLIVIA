@@ -1,0 +1,5 @@
+::: {custom-style="Titulo 1 enum"}
+Referencias bibliográficas 
+:::
+
+<div id="refs"></div>

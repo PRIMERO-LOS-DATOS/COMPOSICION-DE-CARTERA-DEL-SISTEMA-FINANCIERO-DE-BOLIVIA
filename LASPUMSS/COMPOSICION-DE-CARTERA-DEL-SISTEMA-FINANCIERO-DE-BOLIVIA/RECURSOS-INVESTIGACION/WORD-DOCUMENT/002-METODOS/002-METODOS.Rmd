@@ -1,0 +1,6 @@
+# Métodos {#MarcoTeorico}
+
+Los créditos que conceden las diferentes entidades de intermediación financiera del sistema financiero de Bolivia se registran en la cuenta denominada como “cartera” con código 130.00 contenida en los balances mensuales que presentan ante la @MANUAL_CUENTAS_ASFI, pero de manera conjunta en periodos trimestrales dichas instituciones deben presentar estados financieros adicionales que informan sobre la composición de los créditos que conceden, atendiendo a:
+
+- Tipo de crédito, conformada por 30 categorías que fueron agrupadas en las siguientes: Microcréditos, créditos empresariales, créditos de vivienda, créditos PYME y créditos de consumo.
+- Tipo de actividad económica del consumidor financiero, conformada en 18 categorías que fueron agrupadas en las siguientes: Productivo, comercio y servicios.

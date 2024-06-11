@@ -1,0 +1,5 @@
+::: {custom-style="Titulo 1 enum"}
+Introducción 
+:::
+
+El objeto del presente artículo es determinar la composición de la cartera de créditos que concede el sistema financiero de Bolivia por medio de las instituciones que la componen (Bancos múltiples, bancos PYME, cooperativas, entidades financieras de vivienda, instituciones financieras de desarrollo y banco de desarrollo productivo), donde la presentación de los resultados encontrados se compone de un análisis descriptivo por medio de estadísticas de resumen (Promedio, desviación, coeficiente de variación, máximo, mínimo, tendencia y probabilidad t de la tendencia) y series de tiempo de las categorías bajo las cuales se suscribieron los créditos desde 2017 a 2023 ya sea por tipo de crédito o consumidor financiero.

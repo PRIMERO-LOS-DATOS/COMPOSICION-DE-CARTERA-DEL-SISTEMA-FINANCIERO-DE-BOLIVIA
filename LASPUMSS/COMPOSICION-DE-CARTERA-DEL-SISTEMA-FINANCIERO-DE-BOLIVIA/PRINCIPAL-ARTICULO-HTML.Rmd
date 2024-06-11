@@ -1,0 +1,66 @@
+---
+output: html_document
+bibliography: [ASSETS/BIB/references.bib]
+nocite: '@*'
+csl: ASSETS/WORD-DOCUMENT/CLS/apa.csl
+---
+<!-- ################  CONFIGURACIONES ###################### -->
+
+```{r include=FALSE}
+knitr::opts_chunk$set(echo = FALSE,
+                      message = FALSE,
+                      warning = FALSE,
+                      out.width = "100%",
+                      out.height = "100%",
+                      fig.align = "center",
+                      dpi=700)
+
+rootProyectMain <- 'LASPUMSS/COMPOSICION-DE-CARTERA-DEL-SISTEMA-FINANCIERO-DE-BOLIVIA/RECURSOS-INVESTIGACION/HTML-DOCUMENT/'
+```
+
+<!-- ################  DATA ###################### -->
+
+
+<div class="my-post-main-container">
+
+
+**Autor:** Luis Alberto Solis Peña
+
+**Fecha última revisión:** `r Sys.Date()`
+
+## ADVERTENCIA
+
+
+El presente artículo se constituye o tiene como objeto principal la difusión de resultados de investigaciones y ensayos académicos, para la replicación de la información presentada se adjunta los descargos correspondientes:
+
+- Repositorio GitHub (<a href="https://github.com/PRIMERO-LOS-DATOS/COMPOSICION-DE-CARTERA-DEL-SISTEMA-FINANCIERO-DE-BOLIVIA" target="_blank">Clic Aquí</a>) 
+- Documento Microsoft Word ([Clic Aquí]())
+- Documento PDF (Ultima Versión) (<a href="" target="_blank">Clic Aquí</a>) 
+- Zenodo (<a href="https://zenodo.org/doi/10.5281/zenodo.11559670" target="_blank">Clic Aquí</a>) 
+
+## METODOS
+
+<!-- METODOS -->
+```{r, child=paste0(rootProyectMain,"002-METODOS/002-METODOS.Rmd")}
+```
+
+## RESULTADOS
+
+<!-- RESULTADOS -->
+```{r, child=paste0(rootProyectMain,"003-RESULTADOS/003-RESULTADOS.Rmd")}
+```
+
+## CONCLUSIÓN
+
+<!-- CONCLUSIÓN -->
+```{r, child=paste0(rootProyectMain,"004-CONCLUSIONES/004-CONCLUSIONES.Rmd")}
+```
+
+
+## REFERENCIAS BIBLIOGRÁFICAS 
+
+<!-- REFERENCIAS -->
+```{r, child=paste0(rootProyectMain,"005-REFERENCIAS/005-REFERENCIAS.Rmd")}
+```
+
+</div>

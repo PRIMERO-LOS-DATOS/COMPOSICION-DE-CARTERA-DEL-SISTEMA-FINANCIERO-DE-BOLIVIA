@@ -1,0 +1,8 @@
+::: {custom-style="Titulo 1 enum"}
+Introducción 
+:::
+
+El objeto del presente artículo es llevar a cabo la determinación de la solidez financiera por sectores del sistema financiero de Bolivia, atendiendo este análisis a la capacidad que tienen los diferentes sectores hacer frente a obligaciones con propios y terceros. Se ha llevado a cabo el cálculo de indicadores financieros resultado de la comparación de cuentas contenidas en estados financieros de ocho gestiones desde 2014 hasta 2023 con un intervalo mensual, utilizando datos públicos de la autoridad de supervisión del sistema financiero ASFI.
+
+La presentación de la investigación se compone en primera instancia del marco teórico que sustenta la metodología CAMEL, continuando con las precisiones técnicas a las cuales se sujetó su puesta en marcha, dando lugar a sección principal donde exponen los resultados del análisis de la información obtenida de la autoridad de supervisión del sistema financiero ASFI, los cuales han sido procesados por el lenguaje de programación "R" orientado al análisis de datos, finalizando con las conclusiones a las cuales se arribaron.
+

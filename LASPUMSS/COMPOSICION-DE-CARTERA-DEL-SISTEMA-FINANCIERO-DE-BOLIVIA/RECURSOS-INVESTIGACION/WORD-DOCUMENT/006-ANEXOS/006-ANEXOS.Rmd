@@ -1,0 +1,555 @@
+```{r results='hide'}
+rootDirAux <- 'LASPUMSS/COSTO-PROMEDIO-POR-GASTOS-FINANCIEROS-DEL-SISTEMA-FINANCIERO-DE-BOLIVIA/'
+
+if (dir.exists('ALGOTIMOS-MODELOS/HANDLES')) {
+    sapply( list.files('ALGOTIMOS-MODELOS/HANDLES', full.names=TRUE, pattern='\\.[rR]$'), source )
+} 
+
+if (dir.exists(paste0(rootDirAux, 'R'))) {
+    sapply( list.files( paste0(rootDirAux, 'R'), full.names=TRUE, pattern='\\.[rR]$'), source )
+}
+
+require(patchwork)
+require(dplyr)
+
+accountsStudy <- c('CD_210_00', 'CD_220_00', 'CD_230_00', 
+                   'CD_240_00', 'CD_260_00', 'CD_270_00', 
+                   'CD_280_00',
+                   
+                   'CD_411_00', 'CD_412_00', 'CD_413_00', 
+                   'CD_414_00', 'CD_415_00', 'CD_416_00', 
+                   'CD_417_00',
+                   
+                   'CD_414_01', 'CD_414_02', 'CD_414_03',
+                   'CD_414_10', 'CD_414_11', 'CD_414_12',
+                   'CD_414_99')
+
+
+if (!file.exists(paste0(rootDirAux,'DATA/dataBaseByTotalSistema.xlsx'))) {
+    
+    datTotalSistema <-
+    handles$getDatEstFinNormalizadaAsfi(by = 'TOTAL_SISTEMA', 
+                                        yearInit = 2014, 
+                                        desagregados = TRUE, 
+                                        accounts = accountsStudy) %>% 
+        mutate(TIPO_DE_ENTIDAD = gsub('_', ' ', TIPO_DE_ENTIDAD))
+    
+    openxlsx::write.xlsx(datTotalSistema, paste0(rootDirAux,'DATA/dataBaseByTotalSistema.xlsx'))
+    
+} else{
+    
+    datTotalSistema <- 
+        openxlsx::read.xlsx( paste0(rootDirAux,'DATA/dataBaseByTotalSistema.xlsx') ) 
+    
+    if (is.numeric(datTotalSistema$FECHA)) {
+        
+        datTotalSistema <- 
+            datTotalSistema %>% 
+            mutate(FECHA= openxlsx::convertToDate(FECHA))
+    }
+    
+    
+}
+
+
+datTotalSistema <- 
+    datTotalSistema %>% 
+    mutate(CD_411_00_SOBRE_CD_210_00=CD_411_00/CD_210_00,
+           CD_412_00_SOBRE_CD_220_00=CD_412_00/CD_220_00,
+           CD_413_00_SOBRE_CD_230_00=CD_413_00/CD_230_00,
+           CD_414_00_SOBRE_CD_240_00=CD_414_00/CD_240_00,
+           CD_415_00_SOBRE_CD_260_00=CD_415_00/CD_260_00,
+           CD_416_00_SOBRE_CD_270_00=CD_416_00/CD_270_00,
+           CD_417_00_SOBRE_CD_280_00=CD_417_00/CD_280_00)
+
+
+datIdsNamesForPlots <- 
+    openxlsx::read.xlsx( paste0(rootDirAux,'ASSETS/datIdsNamesForPlots.xlsx') )
+
+datIdsNamesForTablesStats <- 
+    openxlsx::read.xlsx( paste0(rootDirAux,'ASSETS/datIdsNamesForTablesStats.xlsx') )
+
+```
+
+
+
+```{r}
+ids <- c(accountsStudy, 
+         'CD_411_00_SOBRE_CD_210_00',
+         'CD_412_00_SOBRE_CD_220_00',
+         'CD_413_00_SOBRE_CD_230_00',
+         'CD_414_00_SOBRE_CD_240_00',
+         'CD_415_00_SOBRE_CD_260_00',
+         'CD_416_00_SOBRE_CD_270_00',
+         'CD_417_00_SOBRE_CD_280_00')
+listResult <- handles$getListStatsOverviewByIdsNames(ids = ids, 
+                                                   datNorm = datTotalSistema, 
+                                                   datIdsNames = datIdsNamesForTablesStats)
+```
+
+::: {custom-style="Titulo 1 enum"}
+Anexos
+:::
+
+El informe finaliza presentando los descargos de los resultados.
+
+<!-- ############################################################### -->
+<!-- ###################### ANEXO 1  ############################### --> 
+<!-- ############################################################### -->
+
+::: {custom-style="Titulo 2 enum"}
+Datos agrupados
+:::
+
+- $V1=$ Obligaciones con el público (Código 210.00)
+- $V2=$ Obligaciones con instituciones fiscales (Código 220.00)
+
+```{r}
+ids <- c('FECHA',
+         'TIPO_DE_ENTIDAD',
+         'CD_210_00',
+         'CD_220_00')
+
+datForRender <- 
+    datTotalSistema %>% 
+    select(all_of(ids)) %>% 
+    as.data.frame()
+
+names(datForRender) <- c('FECHA', 'TIPO DE ENTIDAD', 'V1', 'V2')
+
+handles$renderTableBasic(datForRender, fontSize = 10) %>%
+    set_number_format(0, row=everywhere, col=1) %>% 
+    set_number_format(0, row=1, col=everywhere)
+
+```
+
+::: {custom-style="NotasTablasImagenes"}
+Fuente: Elaboración propia.
+:::
+
+\newpage
+- $V3=$ Obligaciones con bancos y entidades de financiamiento (Código 230.00)
+- $V4=$ Cuentas por pagar (Código 240.00)
+
+```{r}
+ids <- c('FECHA',
+         'TIPO_DE_ENTIDAD',
+         'CD_230_00',
+         'CD_240_00')
+
+datForRender <- 
+    datTotalSistema %>% 
+    select(all_of(ids)) %>% 
+    as.data.frame()
+
+names(datForRender) <- c('FECHA', 'TIPO DE ENTIDAD', 'V3', 'V4')
+
+handles$renderTableBasic(datForRender, fontSize = 10) %>%
+    set_number_format(0, row=everywhere, col=1) %>% 
+    set_number_format(0, row=1, col=everywhere)
+
+```
+
+::: {custom-style="NotasTablasImagenes"}
+Fuente: Elaboración propia.
+:::
+
+\newpage
+- $V5=$ Valores en circulación (Código 260.00)
+- $V6=$ Obligaciones subordinadas (Código 270.00)
+
+```{r}
+ids <- c('FECHA',
+         'TIPO_DE_ENTIDAD',
+         'CD_260_00',
+         'CD_270_00')
+
+datForRender <- 
+    datTotalSistema %>% 
+    select(all_of(ids)) %>% 
+    as.data.frame()
+
+names(datForRender) <- c('FECHA', 'TIPO DE ENTIDAD', 'V5', 'V6')
+
+handles$renderTableBasic(datForRender, fontSize = 10) %>%
+    set_number_format(0, row=everywhere, col=1) %>% 
+    set_number_format(0, row=1, col=everywhere)
+
+```
+
+::: {custom-style="NotasTablasImagenes"}
+Fuente: Elaboración propia.
+:::
+
+\newpage
+- $V7=$ Obligaciones con empresas públicas (Código 280.00)
+
+```{r}
+ids <- c('FECHA',
+         'TIPO_DE_ENTIDAD',
+         'CD_280_00')
+
+datForRender <- 
+    datTotalSistema %>% 
+    select(all_of(ids)) %>% 
+    as.data.frame()
+
+names(datForRender) <- c('FECHA', 'TIPO DE ENTIDAD', 'V7')
+
+handles$renderTableBasic(datForRender, fontSize = 10) %>%
+    set_number_format(0, row=everywhere, col=1) %>% 
+    set_number_format(0, row=1, col=everywhere)
+
+```
+
+::: {custom-style="NotasTablasImagenes"}
+Fuente: Elaboración propia.
+:::
+
+
+\newpage
+- $V8=$ Cargos por obligaciones con el público (Código 411.00)
+- $V9=$ Cargos por obligaciones con instituciones fiscales (Código 412.00)
+
+```{r}
+ids <- c('FECHA',
+         'TIPO_DE_ENTIDAD',
+         'CD_411_00',
+         'CD_412_00')
+
+datForRender <- 
+    datTotalSistema %>% 
+    select(all_of(ids)) %>% 
+    as.data.frame()
+
+names(datForRender) <- c('FECHA', 'TIPO DE ENTIDAD', 'V8', 'V9')
+
+handles$renderTableBasic(datForRender, fontSize = 10) %>%
+    set_number_format(0, row=everywhere, col=1) %>% 
+    set_number_format(0, row=1, col=everywhere)
+
+```
+
+::: {custom-style="NotasTablasImagenes"}
+Fuente: Elaboración propia.
+:::
+
+\newpage
+- $V10=$ Cargos por obligaciones con bancos y entidades de financiamiento (Código 413.00)
+- $V11=$ Cargos por cuentas por pagar y comisiones financieras (Código 414.00)
+
+```{r}
+ids <- c('FECHA',
+         'TIPO_DE_ENTIDAD',
+         'CD_413_00',
+         'CD_414_00')
+
+datForRender <- 
+    datTotalSistema %>% 
+    select(all_of(ids)) %>% 
+    as.data.frame()
+
+names(datForRender) <- c('FECHA', 'TIPO DE ENTIDAD', 'V10', 'V11')
+
+handles$renderTableBasic(datForRender, fontSize = 10) %>%
+    set_number_format(0, row=everywhere, col=1) %>% 
+    set_number_format(0, row=1, col=everywhere)
+
+```
+
+::: {custom-style="NotasTablasImagenes"}
+Fuente: Elaboración propia.
+:::
+
+
+\newpage
+- $V12=$ Cargos por valores en circulación (Código 415.00)
+- $V13=$ Cargos por obligaciones subordinadas (Código 416.00)
+
+```{r}
+ids <- c('FECHA',
+         'TIPO_DE_ENTIDAD',
+         'CD_415_00',
+         'CD_416_00')
+
+datForRender <- 
+    datTotalSistema %>% 
+    select(all_of(ids)) %>% 
+    as.data.frame()
+
+names(datForRender) <- c('FECHA', 'TIPO DE ENTIDAD', 'V12', 'V13')
+
+handles$renderTableBasic(datForRender, fontSize = 10) %>%
+    set_number_format(0, row=everywhere, col=1) %>% 
+    set_number_format(0, row=1, col=everywhere)
+
+```
+
+::: {custom-style="NotasTablasImagenes"}
+Fuente: Elaboración propia.
+:::
+
+\newpage
+- $V14=$ Cargos por obligaciones con empresas públicas (Código 417.00)
+
+```{r}
+ids <- c('FECHA',
+         'TIPO_DE_ENTIDAD',
+         'CD_417_00')
+
+datForRender <- 
+    datTotalSistema %>% 
+    select(all_of(ids)) %>% 
+    as.data.frame()
+
+names(datForRender) <- c('FECHA', 'TIPO DE ENTIDAD', 'V14')
+
+handles$renderTableBasic(datForRender, fontSize = 10) %>%
+    set_number_format(0, row=everywhere, col=1) %>% 
+    set_number_format(0, row=1, col=everywhere)
+
+```
+
+::: {custom-style="NotasTablasImagenes"}
+Fuente: Elaboración propia.
+:::
+
+
+\newpage
+- $V15=$ Primas por compras a futuro de moneda extranjera (Código 414.01)
+- $V16=$ Intereses oficina central y sucursales (Código 414.02)
+
+```{r}
+ids <- c('FECHA',
+         'TIPO_DE_ENTIDAD',
+         'CD_414_01',
+         'CD_414_02')
+
+datForRender <- 
+    datTotalSistema %>% 
+    select(all_of(ids)) %>% 
+    as.data.frame()
+
+names(datForRender) <- c('FECHA', 'TIPO DE ENTIDAD', 'V15', 'V16')
+
+handles$renderTableBasic(datForRender, fontSize = 10) %>%
+    set_number_format(0, row=everywhere, col=1) %>% 
+    set_number_format(0, row=1, col=everywhere)
+
+```
+
+::: {custom-style="NotasTablasImagenes"}
+Fuente: Elaboración propia.
+:::
+
+\newpage
+- $V17=$ Comisiones oficina central y sucursales (Código 414.03)
+- $V18=$ Intereses otras cuentas por pagar (Código 414.10)
+
+```{r}
+ids <- c('FECHA',
+         'TIPO_DE_ENTIDAD',
+         'CD_414_03',
+         'CD_414_10')
+
+datForRender <- 
+    datTotalSistema %>% 
+    select(all_of(ids)) %>% 
+    as.data.frame()
+
+names(datForRender) <- c('FECHA', 'TIPO DE ENTIDAD', 'V17', 'V18')
+
+handles$renderTableBasic(datForRender, fontSize = 10) %>%
+    set_number_format(0, row=everywhere, col=1) %>% 
+    set_number_format(0, row=1, col=everywhere)
+
+```
+
+::: {custom-style="NotasTablasImagenes"}
+Fuente: Elaboración propia.
+:::
+
+
+\newpage
+- $V19=$ Comisiones por financiamientos (Código 414.11)
+- $V20=$ Comisiones garantías contratadas (Código 414.12)
+
+```{r}
+ids <- c('FECHA',
+         'TIPO_DE_ENTIDAD',
+         'CD_414_11',
+         'CD_414_12')
+
+datForRender <- 
+    datTotalSistema %>% 
+    select(all_of(ids)) %>% 
+    as.data.frame()
+
+names(datForRender) <- c('FECHA', 'TIPO DE ENTIDAD', 'V19', 'V20')
+
+handles$renderTableBasic(datForRender, fontSize = 10) %>%
+    set_number_format(0, row=everywhere, col=1) %>% 
+    set_number_format(0, row=1, col=everywhere)
+
+```
+
+::: {custom-style="NotasTablasImagenes"}
+Fuente: Elaboración propia.
+:::
+
+
+\newpage
+- $V21=$ Otras comisiones (Código 414.99)
+
+```{r}
+ids <- c('FECHA',
+         'TIPO_DE_ENTIDAD',
+         'CD_414_99')
+
+datForRender <- 
+    datTotalSistema %>% 
+    select(all_of(ids)) %>% 
+    as.data.frame()
+
+names(datForRender) <- c('FECHA', 'TIPO DE ENTIDAD', 'V21')
+
+handles$renderTableBasic(datForRender, fontSize = 10) %>%
+    set_number_format(0, row=everywhere, col=1) %>% 
+    set_number_format(0, row=1, col=everywhere)
+
+```
+
+::: {custom-style="NotasTablasImagenes"}
+Fuente: Elaboración propia.
+:::
+
+<!-- ############################################################### -->
+<!-- ###################### ANEXO 2  ############################### --> 
+<!-- ############################################################### -->
+
+\newpage
+::: {custom-style="Titulo 2 enum"}
+Indicadores calculados
+:::
+
+- $X1 = \frac{ \text{Cargos por obligaciones con el público} }{ \text{Cargos por obligaciones con el público} }$
+- $X2 = \frac{ \text{Cargos por obligaciones con instituciones fiscales} }{ \text{Cargos por obligaciones con instituciones fiscales} }$
+- $X3 = \frac{ \text{Cargos por obligaciones con bancos y entidades de financiamiento} }{ \text{Obligaciones con bancos y entidades de financiamiento } }$
+- $X4 = \frac{ \text{Cargos por cuentas por pagar y comisiones financieras} }{ \text{Cuentas por pagar} }$
+
+```{r}
+ids <- c('FECHA',
+         'TIPO_DE_ENTIDAD',
+         'CD_411_00_SOBRE_CD_210_00',
+         'CD_412_00_SOBRE_CD_220_00',
+         'CD_413_00_SOBRE_CD_230_00',
+         'CD_414_00_SOBRE_CD_240_00')
+
+datForRender <- 
+    datTotalSistema %>% 
+    select(all_of(ids)) %>% 
+    as.data.frame()
+names(datForRender) <- c('FECHA', 'TIPO DE ENTIDAD', 'X1', 'X2', 'X3', 'X4')
+
+handles$renderTableBasic(datForRender, fontSize = 10) %>%
+    set_number_format(0, row=everywhere, col=1)  %>% 
+    set_number_format(0, row=1, col=everywhere)
+
+```
+
+::: {custom-style="NotasTablasImagenes"}
+Fuente: Elaboración propia.
+:::
+
+
+- $X5 = \frac{ \text{Cargos por valores en circulación} }{ \text{Valores en circulación } }$
+- $X6 = \frac{ \text{Cargos por obligaciones subordinadas} }{ \text{Obligaciones subordinadas } }$
+- $X7 = \frac{ \text{Cargos por obligaciones con empresas públicas} }{ \text{Obligaciones con empresas públicas} }$
+
+
+```{r}
+ids <- c('FECHA',
+         'TIPO_DE_ENTIDAD',
+         'CD_415_00_SOBRE_CD_260_00',
+         'CD_416_00_SOBRE_CD_270_00',
+         'CD_417_00_SOBRE_CD_280_00')
+
+datForRender <- 
+    datTotalSistema %>% 
+    select(all_of(ids)) %>% 
+    as.data.frame()
+names(datForRender) <- c('FECHA', 'TIPO DE ENTIDAD', 'X5', 'X6', 'X7')
+
+handles$renderTableBasic(datForRender, fontSize = 10) %>%
+    set_number_format(0, row=everywhere, col=1) %>% 
+    set_number_format(0, row=1, col=everywhere)
+
+```
+
+::: {custom-style="NotasTablasImagenes"}
+Fuente: Elaboración propia.
+:::
+
+<!-- ############################################################### -->
+<!-- ###################### ANEXO 3  ############################### --> 
+<!-- ############################################################### -->
+
+\newpage
+::: {custom-style="Titulo 2 enum"}
+Gráficos por cuentas
+:::
+
+```{r, fig.id='fig001Anexo', fig.cap='Series de tiempos de pasivos vinculadas a intermediación financiera, correspondientes al periodo 2020-01-28 a 2023-12-28',  fig.width=6.02, fig.height=8}
+ids <- c('CD_210_00', 'CD_220_00', 'CD_230_00',
+         'CD_240_00', 'CD_260_00', 'CD_270_00', 
+         'CD_280_00')
+
+listPlots <- handles$getListPlotsAccoounts(listResult = listResult,
+                                           ids = ids,
+                                           datIdsNames = datIdsNamesForPlots,
+                                           legend_element_text = 14,
+                                           x_y_element_text = 14)
+p <- wrap_plots(listPlots, ncol = 1)
+handles$renderPlotBasic(p, width = 10, height = 15)
+```
+
+::: {custom-style="NotasTablasImagenes"}
+Fuente: Elaboración propia.
+:::
+
+
+```{r, fig.id='fig002Anexo', fig.cap='Series de tiempos de cargos vinculadas a intermediación financiera, correspondientes al periodo 2020-01-28 a 2023-12-28',  fig.width=6.02, fig.height=8}
+ids <- c('CD_411_00', 'CD_412_00', 'CD_413_00', 
+         'CD_414_00', 'CD_415_00', 'CD_416_00', 
+         'CD_417_00')
+listPlots <- handles$getListPlotsAccoounts(listResult = listResult,
+                                           ids = ids,
+                                           datIdsNames = datIdsNamesForPlots,
+                                           legend_element_text = 14,
+                                           x_y_element_text = 14)
+p <- wrap_plots(listPlots, ncol = 1)
+handles$renderPlotBasic(p, width = 10, height = 15)
+```
+
+::: {custom-style="NotasTablasImagenes"}
+Fuente: Elaboración propia.
+:::
+
+
+```{r, fig.id='fig003Anexo', fig.cap='Series de tiempos de partidas por cargos por otras cuentas por pagar y comisiones financieras , correspondientes al periodo 2020-01-28 a 2023-12-28',  fig.width=6.02, fig.height=8}
+ids <- c('CD_414_01', 'CD_414_02', 'CD_414_03',
+         'CD_414_10', 'CD_414_11', 'CD_414_12',
+         'CD_414_99')
+listPlots <- handles$getListPlotsAccoounts(listResult = listResult,
+                                           ids = ids,
+                                           datIdsNames = datIdsNamesForPlots,
+                                           legend_element_text = 14,
+                                           x_y_element_text = 14)
+p <- wrap_plots(listPlots, ncol = 1)
+handles$renderPlotBasic(p, width = 10, height = 15)
+```
+
+::: {custom-style="NotasTablasImagenes"}
+Fuente: Elaboración propia.
+:::
+

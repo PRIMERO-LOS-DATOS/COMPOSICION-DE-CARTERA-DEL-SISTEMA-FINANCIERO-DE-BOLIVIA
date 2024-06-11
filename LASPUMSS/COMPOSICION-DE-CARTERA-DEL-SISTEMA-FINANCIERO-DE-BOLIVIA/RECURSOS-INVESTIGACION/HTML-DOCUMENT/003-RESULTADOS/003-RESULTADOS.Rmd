@@ -1,0 +1,308 @@
+```{r results='hide'}
+sapply( list.files('ALGOTIMOS-MODELOS/HANDLES', full.names=TRUE, pattern='\\.[rR]$'), source )
+
+# FUNCIONES PARA REDERZACION PERSONALIZADA DEL PROYECTO
+sapply( list.files("LASPUMSS/COMPOSICION-DE-CARTERA-DEL-SISTEMA-FINANCIERO-DE-BOLIVIA/R", full.names=TRUE, pattern='\\.[rR]$'), source )
+
+require(dplyr)
+require(stringr)
+require(glue)
+require(ggplot2)
+require(patchwork)
+require(knitr)
+require(kableExtra)
+
+gestionIncial <- 2017
+########################################################################
+
+rootAux <- 'LASPUMSS/COMPOSICION-DE-CARTERA-DEL-SISTEMA-FINANCIERO-DE-BOLIVIA/DATA/datCartTipoCredito_Base.xlsx'
+if (!file.exists(rootAux)) {
+    datCartTipoCredito <- 
+    handles$getDatEstFinAsfi_Norm_CalificacionPorTipoCredito(yearInit = gestionIncial, 
+                                                             by = 'TOTAL_SISTEMA')
+} else{
+    datCartTipoCredito <- 
+        openxlsx::read.xlsx(rootAux) %>% 
+        mutate(FECHA= openxlsx::convertToDate(FECHA)) 
+}
+
+
+rootAux <- 'LASPUMSS/COMPOSICION-DE-CARTERA-DEL-SISTEMA-FINANCIERO-DE-BOLIVIA/DATA/datCartActEcoDeudor_Base.xlsx'
+if (!file.exists(rootAux)) {
+    datCartActEcoDeudor <- 
+    handles$getDatEstFinAsfi_Norm_CalificacionCartActEcoDeudor(yearInit = gestionIncial, 
+                                                             by = 'TOTAL_SISTEMA')
+} else{
+    datCartActEcoDeudor <- openxlsx::read.xlsx(rootAux) %>% 
+        mutate(FECHA= openxlsx::convertToDate(FECHA)) 
+}
+
+
+datCartTipoCredito <- getTsFromDat(datCartTipoCredito)
+
+datCartActEcoDeudor <- getTsFromDat(datCartActEcoDeudor)
+
+datCartTipoCredito <- 
+    datCartTipoCredito %>%
+    mutate(across(.cols = where(is.numeric), ~ ((.x)/TOTAL_CARTERA )*100) )
+
+datCartActEcoDeudor <- 
+    datCartActEcoDeudor %>%
+    mutate(across(.cols = where(is.numeric), ~ ((.x)/TOTAL_CARTERA )*100) )
+
+########################################################################
+
+rootProyectMainAux <- 'LASPUMSS/COMPOSICION-DE-CARTERA-DEL-SISTEMA-FINANCIERO-DE-BOLIVIA/'
+datIdsNamesForPlots <- 
+    openxlsx::read.xlsx( paste0(rootProyectMainAux,'ASSETS/datIdsNamesForPlots.xlsx') )
+
+datIdsNamesStatsTables <-  
+    openxlsx::read.xlsx( paste0(rootProyectMainAux,'ASSETS/datIdsNamesStatsTables.xlsx') )
+
+```
+
+
+```{r}
+datCartActEcoDeudor2 <- 
+    datCartActEcoDeudor %>% 
+    mutate(PRODUCTIVO = 
+               AGRICULTURA_Y_GANADERIA + 
+               CAZA_SILVICULTURA_Y_PESCA + 
+               EXTRACCION_DE_PETROLEO_CRUDO_Y_GAS_NATURAL + 
+               MINERALES_METALICOS_Y_NO_METALICOS + 
+               INDUSTRIA_MANUFACTURERA + 
+               PRODUCCION_Y_DISTRIBUCION_DE_ENERGIA_ELECTRICA_GAS_Y_AGUA + 
+               CONSTRUCCION,
+           COMERCIO = VENTA_AL_POR_MAYOR_Y_MENOR,
+           SERVICIOS = 
+               HOTELES_Y_RESTAURANTES + 
+               TRANSPORTE_ALMACENAMIENTO_Y_COMUNICACION + 
+               INTERMEDIACION_FINANCIERA +
+               SERVICIOS_INMOBILIARIOS_EMPRESARIALES_Y_DE_ALQUILER + 
+               ADMINISTRACION_PUBLICA_DEFENSA_Y_SEGURIDAD_SOCIAL_OBLIGATORIA + 
+               EDUCACION +SERVICIOS_SOCIALES_COMUNALES_Y_PERSONALES + 
+               SERVICIO_DE_HOGARES_PRIVADOS_QUE_CONTRATAN_SERVICIO_DOMESTICO + 
+               SERVICIOS_DE_ORGANIZACIONES_Y_ORGANOS_EXTRATERRITORIALES + 
+               ACTIVIDADES_ATIPICAS,
+           TOTAL_CARTERA = TOTAL_CARTERA
+               ) %>% 
+    select(FECHA, 
+           TIPO_DE_ENTIDAD, 
+           PRODUCTIVO, 
+           COMERCIO, 
+           SERVICIOS, 
+           TOTAL_CARTERA) %>% 
+    as.data.frame()
+```
+
+```{r}
+datCartTipoCredito2 <- 
+    datCartTipoCredito %>% 
+    mutate(CREDITOS_EMPRESARIALES = 
+               CREDITO_EMPRESARIAL +
+               CREDITO_EMPRESARIAL_CALIFICADO_POR_DIAS_MORA +
+               CREDITO_DEBIDAMENTE_GARANTIZADO_AL_SECTOR_PUBLICO +
+               CREDITO_EMPRESARIAL_AGROPECUARIO,
+           CREDITOS_PYME = 
+               CREDITO_PYME_CALIFICADO_EMPRESARIAL + 
+               CREDITO_PYME_CALIFICADO_POR_DIAS_MORA +
+               PYME_AGROPECUARIO_CALIFICADOS_POR_DIAS_MORA + 
+               PYME_AGROPECUARIO_DEBIDAMENTE_GARANTIZADO_CON_GARANTIA_REAL_CALIFICADOS_POR_DIAS_MORA +
+               PYME_AGROPECUARIO_DEBIDAMENTE_GARANTIZADO_CALIFICADOS_POR_DIAS_MORA + 
+               CREDITO_PYME_AGROPECUARIO_CALIFICADO_COMO_EMPRESARIAL + 
+               CREDITO_PYME_AGROPECUARIO_CON_GARANTIA_REAL_CALIFICADO_COMO_EMPRESARIAL,
+           MICROCREDITOS = 
+               MICROCREDITO_INDIVIDUAL + 
+               MICROCREDITO_DEBIDAMENTE_GARANTIZADO + 
+               MICROCREDITO_GARANTIZADO_CON_GARANTIA_REAL + 
+               MICROCREDITO_SOLIDARIO + 
+               MICROCREDITO_SOLIDARIO_DEBIDAMENTE_GARANTIZADO + 
+               MICROCREDITO_BANCA_COMUNAL + 
+               MICROCREDITO_BANCA_COMUNAL_DEBIDAMENTE_GARANTIZADO + 
+               MICROCREDITO_AGROPECUARIO + 
+               MICROCREDITO_AGROPECUARIO_DEBIDAMENTE_GARANTIZADO_C_RESPECTO_GARANTIA_REAL + 
+               MICROCREDITO_AGROPECUARIO_DEBIDAMENTE_GARANTIZADO,
+           CREDITOS_DE_VIVIENDA = 
+               CREDITO_HIPOTECARIO_DE_VIVIENDA +
+               CREDITO_DE_VIVIENDA_SIN_GARANTIA_HIPOTECARIA +
+               CREDITO_DE_VIVIENDA_SIN_GARANTIA_HIPOTECARIA_DEBIDAMENTE_GARANTIZADO +
+               CREDITO_HIPOTECARIO_DE_VIVIENDA_DE_INTERES_SOCIAL +
+               CREDITO_DE_VIVIENDA_DE_INTERES_SOCIAL_SIN_GARANTIA_HIPOTECARIA,
+           CREDITOS_DE_CONSUMO =
+               CREDITO_DE_CONSUMO +
+               CREDITO_DE_CONSUMO_DEBIDAMENTE_GARANTIZADO +
+               CREDITO_DE_CONSUMO_GARANTIZADO_CON_GARANTIA_REAL +
+               CREDITO_DE_CONSUMO_A_TRAVES_DE_MEDIOS_ELECTRONICOS
+           ) %>% 
+    select(FECHA, 
+           TIPO_DE_ENTIDAD, 
+           CREDITOS_EMPRESARIALES,
+           CREDITOS_PYME,
+           MICROCREDITOS,
+           CREDITOS_DE_VIVIENDA,
+           CREDITOS_DE_CONSUMO, 
+           TOTAL_CARTERA) %>% 
+    as.data.frame() 
+```
+
+
+<!-- POR ACTIVIDAD ECNOMICA -->
+
+```{r}
+ids <- (names(datCartActEcoDeudor2)[c(-1,-2)])[1:3]
+
+listResult1 <- 
+    handles$getListStatsOverviewByIdsNames(ids = ids, 
+                                           datNorm = datCartActEcoDeudor2, 
+                                           datIdsNames = datIdsNamesStatsTables, 
+                                           roundInd = FALSE)
+```
+
+<!-- POR TIPO DE CREDITO -->
+
+```{r}
+ids <- (names(datCartTipoCredito2)[c(-1,-2)])[1:5]
+listResult2 <- 
+    handles$getListStatsOverviewByIdsNames(ids = ids, 
+                                           datNorm = datCartTipoCredito2, 
+                                           datIdsNames = datIdsNamesStatsTables, 
+                                           roundInd = FALSE)
+```
+
+
+
+
+Si los créditos concedidos en el sistema financiero de Bolivia son clasificados por tipo de consumidor financiero, es decir, que tipo de actividad económica que desempeña, en promedio está compuesto por:
+
+- Servicios (40.74%)
+- Productivo (38.30%)
+- Comercio (21.14%)
+
+Donde los créditos para consumidores financieros, están relativamente distribuidos pero los créditos al sector de comercio tienen una tendencia negativa que es estadísticamente significativa, es decir, que se espera que el patrón se mantenga en el tiempo, así también, existe una tendencia positiva en los créditos concedidos al sector productivo y sector de servicios, que si bien en la figura aparenta que el sector de servicios es el más favorecido la tendencia calculada indica que el sector productivo incrementa su posición a una tasa de cambio más alta. Por otro lado, si se clasifica los créditos concedidos por categorías bajo la cual fue suscrita, se tiene que:
+
+- Microcréditos (29.84%)
+- Créditos de vivienda (25.46%)
+- Créditos empresariales (22.55%)
+- Créditos PYME (12.50%)
+- Créditos de consumo (9.73%)
+
+Se aprecia que los microcréditos sufrieron un cambio de tendencia en los últimos periodos de la gestión 2022, así también, los microcréditos tienen mayor peso con 29.85 % promedio del total de créditos concedidos, por lo tanto, la política crediticia dirigida a estos sectores ya se por tipo de crédito o consumidor financieros repercutirán en el bienestar general del país.
+
+
+\newpage
+```{r, fig.height=5.65, fig.width=6.02}
+ids <- (names(datCartActEcoDeudor2)[c(-1,-2)])[1:3]
+listPlots <- 
+    handles$getListPlotsAccoounts(ids = ids,
+                                  listResult = listResult1, 
+                                  legend_element_text = 12.5,
+                                  x_y_element_text = 14, 
+                                  datIdsNames = datIdsNamesForPlots)
+p <- wrap_plots(listPlots, ncol = 1)
+handles$renderPlotBasic(p, width = 10, height = 15)
+```
+
+::: {custom-style="NotasTablasImagenes"}
+**Fuente:** Elaboración propia con datos publicados por la Autoridad del Sistema Financiero [@ASFI-WEB]. 
+:::
+
+
+```{r, tab.align='center'}
+captionTable <- 'ESTADÍSTICAS DE RESUMEN DE LA COMPOSICIÓN DE CARTERA DEL SISTEMA FINANCIERO DE BOLIVIA POR TIPO DE ACTIVIDAD ECONÓMICA DEL DEUDOR, 2020-2023 \n (En porcentajes)'
+
+ids <- (names(datCartActEcoDeudor2)[c(-1,-2)])[1:3]
+colNamesRender <- c('TIPO_DE_ENTIDAD', 
+                    'PROMEDIO', 
+                    'DESVIACION',
+                    'COEFICIENTE_DE_VARIACION',
+                    'MINIMO',
+                    'MAXIMO',
+                    'TENDENCIA_MCO',
+                    'PROBABILIDAD_T_TENDENCIA_MCO')
+
+changeColNamesRender<- c('ACTIVIDAD', 
+                         'PROMEDIO', 
+                         'DESVIACION',
+                         'CV',
+                         'MINIMO',
+                         'MAXIMO',
+                         'TENDENCIA',
+                         'P(t)')
+
+listTablesRender <- 
+    handles$renderListTablesAccountsWordDocument_v2(ids = ids,
+                                                 listResult = listResult1, 
+                                                 nSepEnt = 1, 
+                                                 fontSize = 8, 
+                                                 colNamesRender = colNamesRender,
+                                                 changeColNamesRender = changeColNamesRender,
+                                                 set_top_padding = 5,
+                                                 set_bottom_padding = 5,
+                                                 captionTable=captionTable)
+
+listTablesRender
+```
+
+::: {custom-style="NotasTablasImagenes"}
+**Fuente:** Elaboración propia con datos publicados por la Autoridad del Sistema Financiero [@ASFI-WEB]. 
+:::
+
+
+```{r, fig.height=5.5, fig.width=6.02}
+ids <- (names(datCartTipoCredito2)[c(-1,-2)])[1:5]
+listPlots <- 
+    handles$getListPlotsAccoounts(ids = ids,
+                                  listResult = listResult2, 
+                                  legend_element_text = 12.5,
+                                  x_y_element_text = 14, 
+                                  datIdsNames = datIdsNamesForPlots)
+p <- wrap_plots(listPlots, ncol = 1)
+handles$renderPlotBasic(p, width = 10, height = 15)
+```
+
+::: {custom-style="NotasTablasImagenes"}
+**Fuente:** Elaboración propia con datos publicados por la Autoridad del Sistema Financiero [@ASFI-WEB]. 
+:::
+
+
+
+```{r, tab.align='center'}
+captionTable <- 'ESTADÍSTICAS DE RESUMEN DE LA COMPOSICIÓN DE CARTERA DEL SISTEMA FINANCIERO DE BOLIVIA POR TIPO DE CRÉDITO, 2020-2023 \n (En porcentajes)'
+
+ids <- (names(datCartTipoCredito2)[c(-1,-2)])[1:5]
+colNamesRender <- c('TIPO_DE_ENTIDAD', 
+                    'PROMEDIO', 
+                    'DESVIACION',
+                    'COEFICIENTE_DE_VARIACION',
+                    'MINIMO',
+                    'MAXIMO',
+                    'TENDENCIA_MCO',
+                    'PROBABILIDAD_T_TENDENCIA_MCO')
+
+changeColNamesRender<- c('TIPO', 
+                         'PROMEDIO', 
+                         'DESVIACION',
+                         'CV',
+                         'MINIMO',
+                         'MAXIMO',
+                         'TENDENCIA',
+                         'P(t)')
+
+listTablesRender <- 
+    handles$renderListTablesAccountsWordDocument_v2(ids = ids,
+                                                 listResult = listResult2, 
+                                                 nSepEnt = 1, 
+                                                 fontSize = 7, 
+                                                 colNamesRender = colNamesRender,
+                                                 changeColNamesRender = changeColNamesRender,
+                                                 set_top_padding = 4,
+                                                 set_bottom_padding = 4,
+                                                 captionTable=captionTable)
+
+listTablesRender
+```
+
+::: {custom-style="NotasTablasImagenes"}
+**Fuente:** Elaboración propia con datos publicados por la Autoridad del Sistema Financiero [@ASFI-WEB]. 
+:::
+
