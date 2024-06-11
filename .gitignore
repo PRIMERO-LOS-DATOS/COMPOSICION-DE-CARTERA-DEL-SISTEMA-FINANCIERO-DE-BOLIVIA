@@ -1,0 +1,11 @@
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata
+
+# IGNORAR ARCHIVOS DEL TIPO
+*.Rhistory
+
+# IGNORAR CARPETAS
+tmp_files_imgs/
+.Rproj.user/
