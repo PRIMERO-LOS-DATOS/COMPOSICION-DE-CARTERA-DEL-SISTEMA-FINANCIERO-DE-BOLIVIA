@@ -1,8 +1,8 @@
-# COSTO PROMEDIO POR GASTOS FINANCIEROS DEL SISTEMA FINANCIERO DE BOLIVIA
+# COMPOSICIÓN DE CRÉDITOS CONCEDIDOS POR EL SISTEMA FINANCIERO DE BOLIVIA, PERIODO 2017 – 2023
 
-- [Presentación web](https://primero-los-datos-economia-finanzas.blogspot.com/2024/05/costo-promedio-por-gastos-financieros.html)
-- [Informe final (Arvivo word)](https://github.com/PRIMERO-LOS-DATOS/COSTO-PROMEDIO-POR-GASTOS-FINANCIEROS-DEL-SISTEMA-FINANCIERO-DE-BOLIVIA/raw/main/LASPUMSS/COSTO-PROMEDIO-POR-GASTOS-FINANCIEROS-DEL-SISTEMA-FINANCIERO-DE-BOLIVIA/PRINCIPAL-ARTICULO-WORD.docx)
-- [Informe final (Arvivo pdf)](https://doi.org/10.5281/zenodo.11272177)
+- [Presentación web](#)
+- [Informe final (Arvivo word)](https://github.com/PRIMERO-LOS-DATOS/COMPOSICION-DE-CARTERA-DEL-SISTEMA-FINANCIERO-DE-BOLIVIA/raw/main/LASPUMSS/COMPOSICION-DE-CARTERA-DEL-SISTEMA-FINANCIERO-DE-BOLIVIA/PRINCIPAL-ARTICULO-WORD.docx)
+- [Informe final (Arvivo pdf)](https://zenodo.org/doi/10.5281/zenodo.11559670)
 
 
 Este trabajo está bajo licencia 
